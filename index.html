@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Recycling Guide</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #e9f5e6;
+        margin: 0;
+        padding: 0;
+        color: #2d4d2a;
+    }
+    header {
+        background: #2e7d32;
+        padding: 20px;
+        color: white;
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    .search-container {
+        padding: 20px;
+        text-align: center;
+    }
+    .search-container input {
+        width: 80%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 2px solid #2e7d32;
+        font-size: 18px;
+    }
+    .filter-container {
+        width: 90%;
+        margin: 10px auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+    }
+    .filter-btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 20px;
+        background-color: #a5d6a7;
+        cursor: pointer;
+        font-weight: bold;
+        color: #1b5e20;
+    }
+    .container {
+        width: 90%;
+        margin: 20px auto;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    .card {
+        background: #ffffff;
+        border-left: 6px solid #2e7d32;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 0 8px #b7d3b3;
+    }
+    .card h2 {
+        margin: 0;
+        padding-bottom: 10px;
+        color: #1b5e20;
+    }
+    .section-title {
+        font-weight: bold;
+        color: #145214;
+        margin-top: 8px;
+    }
+    ul {
+        padding-left: 20px;
+    }
+</style>
+</head>
+<body>
+
+<header>Recycling Guide ♻️</header>
+
+<div class="search-container">
+    <input type="text" id="searchBar" placeholder="Search waste types...">
+</div>
+
+<div class="filter-container" id="filterContainer"></div>
+
+<div class="container" id="wasteContainer"></div>
+
+<script>
+const wasteData = [
+    {name: "Plastic Bottles", category: "Plastic", steps: ["Collect and remove caps and labels.", "Wash bottles thoroughly.", "Shred bottles into flakes.", "Melt flakes and form pellets.", "Pellets used to make new products."], benefits: "Used to make clothing fibers, carpets, bottles."},
+    {name: "Plastic Bags", category: "Plastic", steps: ["Collect and clean bags.", "Shred and melt.", "Form into pellets or boards."], benefits: "Plastic lumber, composite boards."},
+    {name: "Glass Bottles", category: "Glass", steps: ["Sort by color.", "Crush into cullet.", "Clean and remove contaminants.", "Melt and mold."], benefits: "New bottles, tiles, fiberglass."},
+    {name: "Glass Jars", category: "Glass", steps: ["Collect and clean.", "Sort by type.", "Crush and melt."], benefits: "New jars, insulation material."},
+    {name: "Aluminum Cans", category: "Metal", steps: ["Rinse and sort.", "Shred.", "Melt and form sheets."], benefits: "New cans, auto parts."},
+    {name: "Steel Cans", category: "Metal", steps: ["Sort magnetically.", "Shred and melt."], benefits: "Construction steel."},
+    {name: "Cardboard", category: "Paper", steps: ["Sort and flatten.", "Shred into pulp.", "Press and dry."], benefits: "New cardboard, packaging."},
+    {name: "Paper", category: "Paper", steps: ["Sort and shred.", "Remove ink.", "Press into sheets."], benefits: "New paper products."},
+    {name: "Food Waste", category: "Organic", steps: ["Collect scraps.", "Compost in bin.", "Turn weekly."], benefits: "Fertilizer for soil."},
+    {name: "Yard Waste", category: "Organic", steps: ["Collect leaves/grass.", "Chop.", "Compost."], benefits: "Mulch, compost."},
+    {name: "Electronics", category: "E-Waste", steps: ["Sort devices.", "Remove batteries.", "Separate metals and plastics."], benefits: "Recover metals and parts."},
+    {name: "Batteries", category: "E-Waste", steps: ["Collect safely.", "Shred.", "Recover materials."], benefits: "Reduce toxic waste, recover metals."},
+    {name: "Textiles", category: "Other", steps: ["Sort fabrics.", "Shred into fibers.", "Spin into new yarn."], benefits: "New textiles, insulation."},
+    {name: "Shoes", category: "Other", steps: ["Collect and clean.", "Shred soles."], benefits: "Playground surfaces."},
+    {name: "Wood Scraps", category: "Organic", steps: ["Remove nails.", "Chip wood.", "Press into boards."], benefits: "Particleboard, mulch."},
+    {name: "CFL Bulbs", category: "E-Waste", steps: ["Take to facility.", "Separate safely."], benefits: "Material recovery."},
+    {name: "Plastic Straws", category: "Plastic", steps: ["Collect.", "Shred and melt."], benefits: "Pellets, new products."},
+    {name: "PVC Pipes", category: "Plastic", steps: ["Collect.", "Shred.", "Recycle."], benefits: "New PVC products."},
+    {name: "Broken Toys", category: "Plastic", steps: ["Sort and clean.", "Shred.", "Melt into pellets."], benefits: "New plastic toys."},
+    {name: "Old Towels", category: "Other", steps: ["Sort.", "Shred.", "Use for insulation."], benefits: "Rags, insulation."},
+    {name: "Rubber Tires", category: "Other", steps: ["Remove metal.", "Shred tires."], benefits: "Asphalt, playground."},
+    {name: "Motor Oil", category: "Hazardous", steps: ["Collect used oil.", "Refine."], benefits: "Re-refined lubricants."},
+    {name: "Cooking Oil", category: "Organic", steps: ["Collect.", "Filter.", "Convert to biodiesel."], benefits: "Biodiesel fuel."},
+    {name: "Food Packaging", category: "Plastic", steps: ["Collect.", "Sort.", "Recycle chemically."], benefits: "Low-grade plastic products."},
+    {name: "Glassware", category: "Glass", steps: ["Collect.", "Sort.", "Melt."], benefits: "Art, tiles."},
+    {name: "Aluminum Foil", category: "Metal", steps: ["Collect.", "Clean.", "Melt."], benefits: "New aluminum sheets."},
+    {name: "Newspapers", category: "Paper", steps: ["Collect.", "Shred.", "Press into new paper."], benefits: "Recycled paper products."},
+    {name: "Cardboard Egg Cartons", category: "Paper", steps: ["Collect.", "Shred and press."], benefits: "Compost, recycled paper."},
+    {name: "Plastic Caps", category: "Plastic", steps: ["Collect.", "Shred.", "Melt."], benefits: "New plastic items."},
+    {name: "Glass Light Bulbs", category: "Glass", steps: ["Collect.", "Handle safely."], benefits: "Downcycled glass aggregate."},
+    {name: "Electronics Small", category: "E-Waste", steps: ["Collect.", "Shred.", "Recover metals."], benefits: "Parts for repair."},
+    {name: "Furniture", category: "Other", steps: ["Sort.", "Refurbish."], benefits: "Reclaimed materials."},
+    {name: "Clothing", category: "Other", steps: ["Sort.", "Shred fibers."], benefits: "New clothes, bags."}
+];
+
+const categories = [...new Set(wasteData.map(x=>x.category))];
+const filterContainer = document.getElementById('filterContainer');
+categories.forEach(cat=>{
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    btn.textContent = cat;
+    btn.onclick = ()=> renderWaste(wasteData.filter(w=>w.category===cat));
+    filterContainer.appendChild(btn);
+});
+
+function renderWaste(data){
+    const container = document.getElementById('wasteContainer');
+    container.innerHTML='';
+    data.forEach(item=>{
+        const card = document.createElement('div');
+        card.className='card';
+        card.innerHTML=`
+            <h2>${item.name}</h2>
+            <div class="section-title">Detailed Recycling Steps:</div>
+            <ul>${item.steps.map(s=>`<li>${s}</li>`).join('')}</ul>
+            <div class="section-title">Benefits After Recycling:</div>
+            <p>${item.benefits}</p>
+        `;
+        container.appendChild(card);
+    });
+}
+
+renderWaste(wasteData);
+
+document.getElementById('searchBar').addEventListener('keyup', function(){
+    const search = this.value.toLowerCase();
+    renderWaste(wasteData.filter(w=>w.name.toLowerCase().includes(search) || w.category.toLowerCase().includes(search)));
+});
+</script>
+</body>
+</html>
